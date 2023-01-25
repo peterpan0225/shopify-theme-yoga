@@ -1,0 +1,46 @@
+{%- if template == '404' -%}
+<script>
+
+function avadaMakeRequest(url, method = 'GET', data = null) {
+  // Create the XHR request
+  const request = new XMLHttpRequest();
+
+  // Return it as a Promise
+  return new Promise(function(resolve, reject) {
+    // Setup our listener to process completed requests
+    request.onreadystatechange = function() {
+      // Only run if the request is complete
+      if (request.readyState !== 4) return;
+
+      // Process the response
+      if (
+        request.status >= 200 &&
+        request.status < 300 &&
+        request.status !== 204
+      ) {
+        resolve(JSON.parse(request.responseText));
+      } else {
+        // If failed
+        // eslint-disable-next-line prefer-promise-reject-errors
+        reject({
+          status: request.status,
+          statusText: request.statusText
+        });
+      }
+    };
+
+    // Setup our HTTP request
+    request.open(method, url, true);
+
+    // Send the request
+    if (data) {
+      request.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
+      request.send(JSON.stringify(data));
+    } else {
+      request.send(data);
+    }
+  });
+}
+avadaMakeRequest('https://seo.apps.avada.io/proxy/save404', 'POST', {domain: 'yoga-with-elena.myshopify.com', url: window.location.pathname});
+</script>
+{%- endif -%}
